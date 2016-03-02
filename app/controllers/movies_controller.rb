@@ -11,7 +11,20 @@ class MoviesController < ApplicationController
   end
 
   def index
-    if (params[:sort])
+    @all_ratings = ['G', 'PG', 'PG-13', 'R']
+    session[:rating] = params[:ratings] if params[:ratings]
+    session[:sort] = params[:sort] if params[:sort]
+
+    x=session[:rating]
+    x2=session[:sort]
+
+    if x && x2
+      @ratings = x.keys
+      @movies = Movie.where("rating IN (?)", @ratings).order(x2)
+    elsif x
+      @ratings = x.keys
+      @movies = Movie.where("rating IN (?)", @ratings)
+    elsif x2
       @movies = Movie.order(params[:sort])
     else
       @movies = Movie.all
